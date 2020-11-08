@@ -118,7 +118,7 @@ func SetLogger(logName string, flag uint, level LogLevel) {
  */
 func Trace(format string, v ...interface{}) {
 	if logLevel <= LevelTrace {
-		logTrace.Println(fmt.Sprintf(format, v...))
+		_ = logTrace.Output(2, fmt.Sprintln(fmt.Sprintf(format, v...)))
 	}
 }
 
@@ -129,7 +129,7 @@ func Trace(format string, v ...interface{}) {
  */
 func Info(format string, v ...interface{}) {
 	if logLevel <= LevelInfo {
-		logInfo.Println(fmt.Sprintf(format, v...))
+		_ = logTrace.Output(2, fmt.Sprintln(fmt.Sprintf(format, v...)))
 	}
 }
 
@@ -140,7 +140,7 @@ func Info(format string, v ...interface{}) {
  */
 func Warning(format string, v ...interface{}) {
 	if logLevel <= LevelWarning {
-		logWarning.Println(fmt.Sprintf(format, v...))
+		_ = logTrace.Output(2, fmt.Sprintln(fmt.Sprintf(format, v...)))
 	}
 }
 
@@ -151,6 +151,6 @@ func Warning(format string, v ...interface{}) {
  */
 func Error(format string, v ...interface{}) {
 	if logLevel <= LevelError {
-		logError.Println(fmt.Sprintf(format, v...))
+		_ = logTrace.Output(2, fmt.Sprintln(fmt.Sprintf(format, v...)))
 	}
 }
