@@ -10,6 +10,7 @@ import "github.com/gitteamer/log"
 func main() {
 	logger := log.NewLogger()
 	logger.SetLogger("custom", log.ConsoleFile, log.LevelTrace)
+	logger.SetCallDepth(2)
 
 	logger.Trace("this is trace log.")
 	logger.Info("this is info log.")

@@ -5,6 +5,8 @@ A golang language Library for log
 ### single demo
 
 ```go
+package main
+
 import (
 	"github.com/gitteamer/log"
 )
@@ -20,8 +22,10 @@ func main() {
 ```
 
 ---
-### multiple
+### multiple demo
 ```go
+package main
+
 import (
 	"github.com/gitteamer/log"
 	"time"
@@ -62,4 +66,22 @@ func main() {
 	time.Sleep(time.Second * 10)
 }
 
+```
+
+### custom demo
+```go
+package main
+
+import "github.com/gitteamer/log"
+
+func main() {
+	logger := log.NewLogger()
+	logger.SetLogger("custom", log.ConsoleFile, log.LevelTrace)
+	logger.SetCallDepth(2)
+
+	logger.Trace("this is trace log.")
+	logger.Info("this is info log.")
+	logger.Warning("this is warning log.")
+	logger.Error("this is error log.")
+}
 ```
