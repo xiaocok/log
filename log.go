@@ -1,14 +1,5 @@
 package log
 
-import (
-	"fmt"
-	"io"
-	"io/ioutil"
-	"log"
-	"os"
-	"strings"
-)
-
 /**
  * log type
  */
@@ -23,6 +14,7 @@ const (
  * log level
  */
 type LogLevel uint8
+
 const (
 	LevelTrace   LogLevel = 0
 	LevelInfo    LogLevel = 1
@@ -35,22 +27,14 @@ const (
  * log obj
  */
 var (
-	logTrace   *log.Logger // Trace log
-	logInfo    *log.Logger // Info log
-	logWarning *log.Logger // Warning log
-	logError   *log.Logger // Error log
-	logLevel   LogLevel    // log level
+	logger = NewLogger()
 )
 
 /**
- * init log obj
- * @description: default init log obj, default will output nothing.
+ * init logger
  */
 func init() {
-	logTrace = log.New(ioutil.Discard, "[T] ", log.Ldate|log.Ltime|log.Lshortfile)
-	logInfo = log.New(ioutil.Discard, "[I] ", log.Ldate|log.Ltime|log.Lshortfile)
-	logWarning = log.New(ioutil.Discard, "[W] ", log.Ldate|log.Ltime|log.Lshortfile)
-	logError = log.New(ioutil.Discard, "[E] ", log.Ldate|log.Ltime|log.Lshortfile)
+	SetCallDepth(3)
 }
 
 /**
@@ -62,53 +46,15 @@ func init() {
  * @return
  */
 func SetLogger(logName string, flag uint, level LogLevel) {
-	var (
-		out  io.Writer
-		file *os.File
-		err  error
-	)
+	logger.SetLogger(logName, flag, level)
+}
 
-	if flag == None {
-		log.Println("log flag is None, there is nothing to output.")
-	}
-	// if log contain file log type, then create log dir and log file.
-	if flag&File == File {
-		if logName == "" {
-			logName = "default.log"
-		}
-		if !strings.HasSuffix(logName, ".log") {
-			logName += ".log"
-		}
-
-		if err = os.Mkdir(logPath, 0666); err != nil && !os.IsExist(err) {
-			log.Println("log folder is not Exist, create folder log err:", err.Error())
-		}
-
-		logPath := logPath + string(os.PathSeparator) + logName
-		file, err = os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-		if err != nil {
-			log.Println("Failed to open error log file:", err)
-		}
-	}
-
-	// switch flag to confirm log type
-	switch flag {
-	case None:
-		out = ioutil.Discard
-	case Console:
-		out = os.Stdout
-	case File:
-		out = file
-	default: // ConsoleFile and others
-		out = io.MultiWriter(os.Stdout, file)
-	}
-
-	// set log level and log output
-	logLevel = level
-	logTrace.SetOutput(out)
-	logInfo.SetOutput(out)
-	logWarning.SetOutput(out)
-	logError.SetOutput(out)
+/**
+ * set call depth
+ * @param int callDepth:
+ */
+func SetCallDepth(callDepth int) {
+	logger.SetCallDepth(callDepth)
 }
 
 /**
@@ -117,9 +63,7 @@ func SetLogger(logName string, flag uint, level LogLevel) {
  * @param ...interface{} v:	the format params
  */
 func Trace(format string, v ...interface{}) {
-	if logLevel <= LevelTrace {
-		_ = logTrace.Output(2, fmt.Sprintln(fmt.Sprintf(format, v...)))
-	}
+	logger.Trace(format, v...)
 }
 
 /**
@@ -128,9 +72,7 @@ func Trace(format string, v ...interface{}) {
  * @param ...interface{} v:	the format params
  */
 func Info(format string, v ...interface{}) {
-	if logLevel <= LevelInfo {
-		_ = logTrace.Output(2, fmt.Sprintln(fmt.Sprintf(format, v...)))
-	}
+	logger.Info(format, v...)
 }
 
 /**
@@ -139,9 +81,7 @@ func Info(format string, v ...interface{}) {
  * @param ...interface{} v:	the format params
  */
 func Warning(format string, v ...interface{}) {
-	if logLevel <= LevelWarning {
-		_ = logTrace.Output(2, fmt.Sprintln(fmt.Sprintf(format, v...)))
-	}
+	logger.Warning(format, v...)
 }
 
 /**
@@ -150,7 +90,5 @@ func Warning(format string, v ...interface{}) {
  * @param ...interface{} v:	the format params
  */
 func Error(format string, v ...interface{}) {
-	if logLevel <= LevelError {
-		_ = logTrace.Output(2, fmt.Sprintln(fmt.Sprintf(format, v...)))
-	}
+	logger.Error(format, v...)
 }
