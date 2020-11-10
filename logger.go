@@ -125,7 +125,7 @@ func (l *Logger) Trace(format string, v ...interface{}) {
  */
 func (l *Logger) Info(format string, v ...interface{}) {
 	if l.logLevel <= LevelInfo {
-		_ = l.logTrace.Output(l.callDepth, fmt.Sprintln(fmt.Sprintf(format, v...)))
+		_ = l.logInfo.Output(l.callDepth, fmt.Sprintln(fmt.Sprintf(format, v...)))
 	}
 }
 
@@ -136,7 +136,7 @@ func (l *Logger) Info(format string, v ...interface{}) {
  */
 func (l *Logger) Warning(format string, v ...interface{}) {
 	if l.logLevel <= LevelWarning {
-		_ = l.logTrace.Output(l.callDepth, fmt.Sprintln(fmt.Sprintf(format, v...)))
+		_ = l.logWarning.Output(l.callDepth, fmt.Sprintln(fmt.Sprintf(format, v...)))
 	}
 }
 
@@ -147,6 +147,6 @@ func (l *Logger) Warning(format string, v ...interface{}) {
  */
 func (l *Logger) Error(format string, v ...interface{}) {
 	if l.logLevel <= LevelError {
-		_ = l.logTrace.Output(l.callDepth, fmt.Sprintln(fmt.Sprintf(format, v...)))
+		_ = l.logError.Output(l.callDepth, fmt.Sprintln(fmt.Sprintf(format, v...)))
 	}
 }
