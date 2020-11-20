@@ -51,9 +51,11 @@ type Logger struct {
  */
 func (l *Logger) SetLogger(logName string, flag uint, level LogLevel) {
 	var (
-		out  io.Writer
-		file *os.File
-		err  error
+		out      io.Writer
+		file     *os.File
+		err      error
+		flagTxt  string
+		levelTxt string
 	)
 
 	if flag == None {
@@ -83,12 +85,27 @@ func (l *Logger) SetLogger(logName string, flag uint, level LogLevel) {
 	switch flag {
 	case None:
 		out = ioutil.Discard
+		flagTxt = "None"
 	case Console:
 		out = os.Stdout
+		flagTxt = "Console"
 	case File:
 		out = file
+		flagTxt = "File"
 	default: // ConsoleFile and others
 		out = io.MultiWriter(os.Stdout, file)
+		flagTxt = "ConsoleFile"
+	}
+
+	switch level {
+	case LevelTrace:
+		levelTxt = "trace"
+	case LevelInfo:
+		levelTxt = "info"
+	case LevelWarning:
+		levelTxt = "warning"
+	case LevelError:
+		levelTxt = "error"
 	}
 
 	// set log level and log output
@@ -97,6 +114,9 @@ func (l *Logger) SetLogger(logName string, flag uint, level LogLevel) {
 	l.logInfo.SetOutput(out)
 	l.logWarning.SetOutput(out)
 	l.logError.SetOutput(out)
+
+	_ = l.logInfo.Output(l.callDepth, fmt.Sprintln(fmt.Sprintf("set logger: logname=%s, logtype=%s, loglevel=%s.",
+		logName, flagTxt, levelTxt)))
 }
 
 /**
